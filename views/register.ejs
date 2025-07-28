@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - <%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav container">
+      <a href="/" class="logo"><%= title %></a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/api/login">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="form-container fade-in-up">
+        <h1 class="form-title">Join Us Today</h1>
+        <form action="/api/register" method="POST">
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-input" required placeholder="Choose a username">
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" id="email" name="email" class="form-input" required placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-input" required placeholder="Create a strong password">
+          </div>
+          <button type="submit" class="form-submit">Create Account</button>
+        </form>
+        <div class="form-link">
+          <p>Already have an account? <a href="/api/login">Sign in here</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

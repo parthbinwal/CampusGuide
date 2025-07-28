@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Your Ultimate Guide</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav container">
+      <a href="/" class="logo"><%= title %></a>
+      <ul class="nav-links">
+        <li><a href="/api/login">Login</a></li>
+        <li><a href="/api/register">Sign Up</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <section class="hero fade-in-up">
+        <h1>Welcome to Your Ultimate Guide</h1>
+        <p>Discover amazing resources, connect with like-minded people, and unlock your potential. Your journey to success starts here with our comprehensive platform designed to guide you every step of the way.</p>
+        <div class="cta-buttons">
+          <a href="/api/register" class="btn btn-primary">Get Started</a>
+          <a href="/api/login" class="btn btn-secondary">Sign In</a>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">🚀</div>
+          <h3>Fast & Reliable</h3>
+          <p>Experience lightning-fast performance with our optimized platform designed for efficiency and reliability.</p>
+        </div>
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">🔒</div>
+          <h3>Secure & Private</h3>
+          <p>Your data is protected with enterprise-grade security measures and privacy-first design principles.</p>
+        </div>
+        <div class="feature-card fade-in-up">
+          <div class="feature-icon">💡</div>
+          <h3>Smart Solutions</h3>
+          <p>Intelligent features and personalized recommendations to help you achieve your goals more effectively.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

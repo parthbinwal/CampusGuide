@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - <%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav container">
+      <a href="/" class="logo"><%= title %></a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/api/register">Sign Up</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="form-container fade-in-up">
+        <h1 class="form-title">Welcome Back</h1>
+        <form action="/api/login" method="POST">
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" id="email" name="email" class="form-input" required placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-input" required placeholder="Enter your password">
+          </div>
+          <button type="submit" class="form-submit">Sign In</button>
+        </form>
+        <div class="form-link">
+          <p>Don't have an account? <a href="/api/register">Create one here</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

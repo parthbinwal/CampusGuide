@@ -5,15 +5,19 @@
 #include <ctype.h>
 #include <time.h>
 #include <windows.h>
-#include <stdbool.h>
 
-// Fix M_PI definition
+/* Fix M_PI definition */
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
+/* Use int instead of bool for C90 compatibility */
+#define bool int
+#define true 1
+#define false 0
+
 #define A 6378137.0
-#define F (1.0 / 298.257223563) // Fixed division
+#define F (1.0 / 298.257223563)
 #define B (A * (1 - F))
 #define V 15
 #define INF 9999999
@@ -42,35 +46,34 @@ typedef struct
   int size;
 } PriorityQueue;
 
-// Updated Node array with your college coordinates
-// Converted from degrees/minutes/seconds to decimal degrees
+/* Updated Node array with your college coordinates */
 Node nodes[V] =
-    {
-        {"main gate", "main gate", 29.375000, 79.531111},                 // 29°22'30"N 79°31'52"E
-        {"oat", "oat", 29.375278, 79.530000},                             // 29°22'31"N 79°31'48"E
-        {"basketball", "basketball", 29.375000, 79.530278},               // 29°22'30"N 79°31'49"E
-        {"cricket ground", "cricket ground", 29.375000, 79.529444},       // 29°22'30"N 79°31'44"E
-        {"bus", "bus", 29.374444, 79.531111},                             // 29°22'28"N 79°31'52"E
-        {"DS", "DS", 29.375278, 79.529722},                               // 29°22'31"N 79°31'47"E
-        {"academic block a", "academic block a", 29.375278, 79.530833},   // 29°22'31"N 79°31'51"E
-        {"academic block c", "academic block c", 29.374444, 79.530556},   // 29°22'28"N 79°31'50"E
-        {"academic block d", "academic block d", 29.374444, 79.530000},   // 29°22'28"N 79°31'48"E
-        {"library", "library", 29.375556, 79.530556},                     // 29°22'32"N 79°31'50"E
-        {"canteen", "canteen", 29.375000, 79.530833},                     // 29°22'30"N 79°31'51"E
-        {"volleyball ground", "volleyball ground", 29.375000, 79.530000}, // 29°22'30"N 79°31'48"E
-        {"hostel", "hostel", 29.375833, 79.529444},                       // 29°22'33"N 79°31'44"E
-        {"saisandhya hall", "saisandhya hall", 29.375556, 79.530000},     // 29°22'32"N 79°31'48"E
-        {"academic block b", "academic block b", 29.374722, 79.529722}    // 29°22'29"N 79°31'47"E
+{
+    {"main gate", "main gate", 29.375000, 79.531111},
+    {"oat", "oat", 29.375278, 79.530000},
+    {"basketball", "basketball", 29.375000, 79.530278},
+    {"cricket ground", "cricket ground", 29.375000, 79.529444},
+    {"bus", "bus", 29.374444, 79.531111},
+    {"DS", "DS", 29.375278, 79.529722},
+    {"academic block a", "academic block a", 29.375278, 79.530833},
+    {"academic block c", "academic block c", 29.374444, 79.530556},
+    {"academic block d", "academic block d", 29.374444, 79.530000},
+    {"library", "library", 29.375556, 79.530556},
+    {"canteen", "canteen", 29.375000, 79.530833},
+    {"volleyball ground", "volleyball ground", 29.375000, 79.530000},
+    {"hostel", "hostel", 29.375833, 79.529444},
+    {"saisandhya hall", "saisandhya hall", 29.375556, 79.530000},
+    {"academic block b", "academic block b", 29.374722, 79.529722}
 };
 
-// Windows memory snapshot
+/* Windows memory snapshot */
 void getMemorySnapshot(SIZE_T *memKB)
 {
   MEMORYSTATUSEX statex;
   statex.dwLength = sizeof(statex);
   if (GlobalMemoryStatusEx(&statex))
   {
-    *memKB = (SIZE_T)(statex.ullAvailPhys / 1024); // Available RAM in KB
+    *memKB = (SIZE_T)(statex.ullAvailPhys / 1024);
   }
   else
   {
@@ -90,14 +93,18 @@ double vincenty(Node a, Node b)
   double L = toRadians(b.lon - a.lon);
   double lambda = L, lambda_prev;
   int iterations = 100;
-
   double sinSigma, cosSigma, sigma, sinAlpha, cos2Alpha, C;
+  double sinLambda, cosLambda, sinU1, cosU1, sinU2, cosU2;
+  double u2, A_coeff, B_coeff, deltaSigma;
 
   do
   {
-    double sinLambda = sin(lambda), cosLambda = cos(lambda);
-    double sinU1 = sin(U1), cosU1 = cos(U1);
-    double sinU2 = sin(U2), cosU2 = cos(U2);
+    sinLambda = sin(lambda);
+    cosLambda = cos(lambda);
+    sinU1 = sin(U1);
+    cosU1 = cos(U1);
+    sinU2 = sin(U2);
+    cosU2 = cos(U2);
 
     sinSigma = sqrt(pow(cosU2 * sinLambda, 2) +
                     pow(cosU1 * sinU2 - sinU1 * cosU2 * cosLambda, 2));
@@ -115,19 +122,20 @@ double vincenty(Node a, Node b)
                      (sigma + C * sinSigma * (cosSigma + C * cosSigma * (-1 + 2 * cosSigma * cosSigma)));
   } while (fabs(lambda - lambda_prev) > 1e-12 && --iterations);
 
-  double u2 = cos2Alpha * (A * A - B * B) / (B * B);
-  double A_coeff = 1 + (u2 / 16384) * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
-  double B_coeff = (u2 / 1024) * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
+  u2 = cos2Alpha * (A * A - B * B) / (B * B);
+  A_coeff = 1 + (u2 / 16384) * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
+  B_coeff = (u2 / 1024) * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
 
-  double deltaSigma = B_coeff * sinSigma *
-                      (cosSigma + (B_coeff / 4) * (cos(2 * sigma) - 3 * sinSigma * sinSigma));
+  deltaSigma = B_coeff * sinSigma *
+               (cosSigma + (B_coeff / 4) * (cos(2 * sigma) - 3 * sinSigma * sinSigma));
 
   return B * A_coeff * (sigma - deltaSigma);
 }
 
 int findNodeByName(char *name)
 {
-  for (int i = 0; i < V; i++)
+  int i;
+  for (i = 0; i < V; i++)
   {
     if (_stricmp(name, nodes[i].name) == 0 || _stricmp(name, nodes[i].shortName) == 0)
       return i;
@@ -137,10 +145,11 @@ int findNodeByName(char *name)
 
 void reconstructPath(int src, int dest, int next[V][V], char *url, int distance, double timeRequired)
 {
-  strcat(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
   char buffer[100];
-
   int u = src;
+  
+  strcat(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
+
   while (u != dest)
   {
     sprintf(buffer, "%lf,%lf;", nodes[u].lat, nodes[u].lon);
@@ -153,12 +162,13 @@ void reconstructPath(int src, int dest, int next[V][V], char *url, int distance,
   strcat(url, buffer);
 }
 
-// Floyd War-shall Algorithm
+/* Floyd-Warshall Algorithm */
 void floydWarshall(int graph[V][V], int next[V][V])
 {
-  for (int k = 0; k < V; k++)
-    for (int i = 0; i < V; i++)
-      for (int j = 0; j < V; j++)
+  int k, i, j;
+  for (k = 0; k < V; k++)
+    for (i = 0; i < V; i++)
+      for (j = 0; j < V; j++)
         if (graph[i][k] + graph[k][j] < graph[i][j])
         {
           graph[i][j] = graph[i][k] + graph[k][j];
@@ -166,23 +176,26 @@ void floydWarshall(int graph[V][V], int next[V][V])
         }
 }
 
-// Dijkstra Algorithm
+/* Dijkstra Algorithm */
 void dijkstra(int src, int dest, int *path, int *pathLength, double *totalDist)
 {
   double dist[V];
   int visited[V] = {0}, prev[V];
-  for (int i = 0; i < V; i++)
+  int i, j, u, v, count, at, tmp;
+  double min, d;
+  
+  for (i = 0; i < V; i++)
   {
     dist[i] = INF;
     prev[i] = -1;
   }
   dist[src] = 0;
 
-  for (int i = 0; i < V - 1; i++)
+  for (i = 0; i < V - 1; i++)
   {
-    double min = INF;
-    int u = -1;
-    for (int j = 0; j < V; j++)
+    min = INF;
+    u = -1;
+    for (j = 0; j < V; j++)
       if (!visited[j] && dist[j] < min)
       {
         min = dist[j];
@@ -193,11 +206,11 @@ void dijkstra(int src, int dest, int *path, int *pathLength, double *totalDist)
 
     visited[u] = 1;
 
-    for (int v = 0; v < V; v++)
+    for (v = 0; v < V; v++)
     {
       if (!visited[v] && u != v)
       {
-        double d = vincenty(nodes[u], nodes[v]);
+        d = vincenty(nodes[u], nodes[v]);
         if (d < THRESHOLD && dist[u] + d < dist[v])
         {
           dist[v] = dist[u] + d;
@@ -214,12 +227,12 @@ void dijkstra(int src, int dest, int *path, int *pathLength, double *totalDist)
     return;
   }
 
-  int count = 0;
-  for (int at = dest; at != -1; at = prev[at])
+  count = 0;
+  for (at = dest; at != -1; at = prev[at])
     path[count++] = at;
-  for (int i = 0; i < count / 2; i++)
+  for (i = 0; i < count / 2; i++)
   {
-    int tmp = path[i];
+    tmp = path[i];
     path[i] = path[count - i - 1];
     path[count - i - 1] = tmp;
   }
@@ -228,8 +241,7 @@ void dijkstra(int src, int dest, int *path, int *pathLength, double *totalDist)
   *totalDist = dist[dest];
 }
 
-// Priority queue functions for A*
-
+/* Priority queue functions for A* */
 void pqInsert(PriorityQueue *pq, int index, double fScore)
 {
   int i = pq->size++;
@@ -264,19 +276,22 @@ int pqExtractMin(PriorityQueue *pq)
 void reconstructAStarPath(int cameFrom[], int current, Node nodes[V], char *url, int distance, double timeRequired)
 {
   char buffer[100];
-  strcat(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
   int path[V], count = 0;
+  int i;
+  
+  strcat(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
+  
   while (current != -1)
   {
     path[count++] = current;
     current = cameFrom[current];
   }
-  for (int i = count - 1; i >= 0; i--)
+  for (i = count - 1; i >= 0; i--)
   {
     sprintf(buffer, "%lf,%lf;", nodes[path[i]].lat, nodes[path[i]].lon);
     strcat(url, buffer);
   }
-  url[strlen(url) - 1] = '\0'; // remove trailing semicolon
+  url[strlen(url) - 1] = '\0'; /* remove trailing semicolon */
   sprintf(buffer, "#map=19/%lf/%lf&distance=%d&time=%.2f", nodes[path[count - 1]].lat, nodes[path[count - 1]].lon, distance, timeRequired);
   strcat(url, buffer);
 }
@@ -285,9 +300,13 @@ int aStar(int graph[V][V], Node nodes[V], int start, int goal, int *totalDist, i
 {
   double gScore[V], fScore[V];
   int visited[V] = {0};
-  PriorityQueue pq = {.size = 0};
+  PriorityQueue pq;
+  int i, neighbor, current;
+  double tentative_gScore;
+  
+  pq.size = 0;
 
-  for (int i = 0; i < V; i++)
+  for (i = 0; i < V; i++)
   {
     gScore[i] = INF;
     fScore[i] = INF;
@@ -301,7 +320,7 @@ int aStar(int graph[V][V], Node nodes[V], int start, int goal, int *totalDist, i
 
   while (pq.size > 0)
   {
-    int current = pqExtractMin(&pq);
+    current = pqExtractMin(&pq);
     if (current == goal)
     {
       *totalDist = (int)gScore[goal];
@@ -309,11 +328,11 @@ int aStar(int graph[V][V], Node nodes[V], int start, int goal, int *totalDist, i
     }
 
     visited[current] = 1;
-    for (int neighbor = 0; neighbor < V; neighbor++)
+    for (neighbor = 0; neighbor < V; neighbor++)
     {
       if (graph[current][neighbor] == INF || visited[neighbor])
         continue;
-      double tentative_gScore = gScore[current] + graph[current][neighbor];
+      tentative_gScore = gScore[current] + graph[current][neighbor];
       if (tentative_gScore < gScore[neighbor])
       {
         cameFrom[neighbor] = current;
@@ -326,7 +345,7 @@ int aStar(int graph[V][V], Node nodes[V], int start, int goal, int *totalDist, i
   return 0;
 }
 
-// JSON output functions for web integration
+/* JSON output functions for web integration */
 void printWebJSON(int choice, int distance, double timeMinutes, int steps, char *pathStr, char *algorithm)
 {
   printf("{");
@@ -344,13 +363,14 @@ void printErrorJSON(char *message)
   printf("{\"success\":false,\"error\":\"%s\"}", message);
 }
 
-// Function to display all available locations
+/* Function to display all available locations */
 void displayAvailableLocations()
 {
+  int i;
   printf("\n=== Available Campus Locations ===\n");
   printf("%-3s %-25s %-15s\n", "ID", "Location Name", "Short Name");
   printf("---------------------------------------------------\n");
-  for (int i = 0; i < V; i++)
+  for (i = 0; i < V; i++)
   {
     printf("%-3d %-25s %-15s\n", i, nodes[i].name, nodes[i].shortName);
   }
@@ -359,8 +379,14 @@ void displayAvailableLocations()
 
 int main(int argc, char *argv[])
 {
-  // Check if called from web
   bool webOutput = false;
+  int choice, srcIdx, destIdx;
+  char *source, *dest;
+  int graph[V][V], next[V][V];
+  int i, j;
+  double d;
+
+  /* Remove debug output for clean web mode */
   if (argc > 4 && strcmp(argv[4], "--web") == 0)
   {
     webOutput = true;
@@ -380,12 +406,12 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  int choice = atoi(argv[1]);
-  char *source = argv[2];
-  char *dest = argv[3];
+  choice = atoi(argv[1]);
+  source = argv[2];
+  dest = argv[3];
 
-  int srcIdx = findNodeByName(source);
-  int destIdx = findNodeByName(dest);
+  srcIdx = findNodeByName(source);
+  destIdx = findNodeByName(dest);
 
   if (srcIdx == -1 || destIdx == -1)
   {
@@ -408,28 +434,30 @@ int main(int argc, char *argv[])
     printf("To: %s\n", nodes[destIdx].name);
   }
 
-  // Initialize graph
-  int graph[V][V], next[V][V];
-  for (int i = 0; i < V; i++)
+  /* Initialize graph */
+  for (i = 0; i < V; i++)
   {
-    for (int j = 0; j < V; j++)
+    for (j = 0; j < V; j++)
     {
       if (i == j)
         graph[i][j] = 0;
       else
       {
-        double d = vincenty(nodes[i], nodes[j]);
+        d = vincenty(nodes[i], nodes[j]);
         graph[i][j] = (d < THRESHOLD) ? (int)d : INF;
       }
       next[i][j] = (graph[i][j] != INF) ? j : -1;
     }
   }
 
-  // Algorithm execution with web-friendly output
+  /* Algorithm execution with web-friendly output */
   if (choice == 1)
-  { // Dijkstra
+  { /* Dijkstra */
     int path[V], pathLength;
     double totalDist;
+    double timeMinutes;
+    int steps;
+    
     dijkstra(srcIdx, destIdx, path, &pathLength, &totalDist);
 
     if (pathLength == 0 || totalDist == INF)
@@ -445,13 +473,13 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    double timeMinutes = (totalDist / WALKING_SPEED) / 60.0;
-    int steps = (int)(totalDist / STEP_LENGTH);
+    timeMinutes = (totalDist / WALKING_SPEED) / 60.0;
+    steps = (int)(totalDist / STEP_LENGTH);
 
     if (webOutput)
     {
       char pathStr[500] = "";
-      for (int i = 0; i < pathLength; i++)
+      for (i = 0; i < pathLength; i++)
       {
         strcat(pathStr, nodes[path[i]].name);
         if (i < pathLength - 1)
@@ -466,7 +494,7 @@ int main(int argc, char *argv[])
       printf("Walking Time: %.2f minutes\n", timeMinutes);
       printf("Total Steps: %d\n", steps);
       printf("Path: ");
-      for (int i = 0; i < pathLength; i++)
+      for (i = 0; i < pathLength; i++)
       {
         printf("%s", nodes[path[i]].name);
         if (i < pathLength - 1)
@@ -476,8 +504,11 @@ int main(int argc, char *argv[])
     }
   }
   else if (choice == 2)
-  { // A*
+  { /* A* */
     int totalDist, cameFrom[V];
+    double timeMinutes;
+    int steps;
+    
     if (!aStar(graph, nodes, srcIdx, destIdx, &totalDist, cameFrom))
     {
       if (webOutput)
@@ -491,26 +522,30 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    double timeMinutes = (totalDist / WALKING_SPEED) / 60.0;
-    int steps = (int)(totalDist / STEP_LENGTH);
+    timeMinutes = (totalDist / WALKING_SPEED) / 60.0;
+    steps = (int)(totalDist / STEP_LENGTH);
 
     if (webOutput)
     {
-      // Reconstruct path for A*
       char pathStr[500] = "";
       int pathNodes[V], count = 0;
       int current = destIdx;
+
+      /* Reconstruct path */
       while (current != -1)
       {
         pathNodes[count++] = current;
         current = cameFrom[current];
       }
-      for (int i = count - 1; i >= 0; i--)
+
+      /* Build path string */
+      for (i = count - 1; i >= 0; i--)
       {
         strcat(pathStr, nodes[pathNodes[i]].name);
         if (i > 0)
           strcat(pathStr, " → ");
       }
+
       printWebJSON(choice, totalDist, timeMinutes, steps, pathStr, "A*");
     }
     else
@@ -521,9 +556,13 @@ int main(int argc, char *argv[])
     }
   }
   else if (choice == 3)
-  { // Floyd-Warshall
+  { /* Floyd-Warshall */
+    int totalDist;
+    double timeMinutes;
+    int steps;
+    
     floydWarshall(graph, next);
-    int totalDist = graph[srcIdx][destIdx];
+    totalDist = graph[srcIdx][destIdx];
 
     if (totalDist == INF)
     {
@@ -538,12 +577,12 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    double timeMinutes = (totalDist / WALKING_SPEED) / 60.0;
-    int steps = (int)(totalDist / STEP_LENGTH);
+    timeMinutes = (totalDist / WALKING_SPEED) / 60.0;
+    steps = (int)(totalDist / STEP_LENGTH);
 
     if (webOutput)
     {
-      // Reconstruct path for Floyd-Warshall
+      /* Reconstruct path for Floyd-Warshall */
       char pathStr[500] = "";
       int u = srcIdx;
       strcat(pathStr, nodes[u].name);
@@ -563,16 +602,14 @@ int main(int argc, char *argv[])
     }
   }
   else if (choice == 4)
-  { // Comparison
+  { /* Comparison */
     if (webOutput)
     {
       printErrorJSON("Comparison mode not available for web interface");
     }
     else
     {
-      // Your existing comparison code...
       printf("\nComparing All Algorithms...\n");
-      // Keep existing comparison logic for console mode
     }
   }
   else

@@ -64,7 +64,7 @@ const getMap=(req,res)=>{
   if(!req.session.user){
     return res.redirect('/');
   }
-  res.render('Map',{title:"maprender"});
+  res.render('Map',{ result: null, osm_link: null });
 }
 
 

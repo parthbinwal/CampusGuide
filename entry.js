@@ -6,6 +6,7 @@ const path = require('path');
 const session=require('express-session')
 const authRoutes = require('./router/authRoutes');
 const { connectDB } = require('./database/dbConnection');
+const { findShortestPath } = require('./controller/findPathController');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -36,3 +37,4 @@ app.get('/', (req, res) => {
   //}
 //})
 app.use('/api',authRoutes);
+app.use('/find_path',findShortestPath);

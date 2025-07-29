@@ -7,6 +7,79 @@
 </head>
 <body>
   <h1>hello</h1>
-  
+  <div class="input-form">
+    <h2>Find the Shortest Path</h2>
+    <form action="/find_path" method="post">
+
+      <label for="choice">Choice : </label>
+      <select name="choice" id="choice" required>
+        <option value="1">Dijkstra</option>
+        <option value="2">A star</option>
+        <option value="3">Floyd Warshall</option>
+        <option value="4">Comparison of Algorithm</option>
+      </select>
+      <br><br>
+
+      <label for="source">Source : </label>
+      <select name="source" id="source" required>
+        <option value="main gate">Main Gate</option>
+        <option value="oat">OAT</option>
+        <option value="basketball">Basketball</option>
+        <option value="cricket ground">Cricket Ground</option>
+        <option value="bus">Bus</option>
+        <option value="DS">DS</option>
+        <option value="academic block a">Academic Block A</option>
+        <option value="academic block c">Academic Block C</option>
+        <option value="academic block d">Academic Block D</option>
+        <option value="library">Library</option>
+        <option value="canteen">Canteen</option>
+        <option value="volleyball ground">Volleyball Ground</option>
+        <option value="hostel">Hostel</option>
+        <option value="saisandhya hall">Saisandhya Hall</option>
+        <option value="academic block b">Academic Block B</option>
+      </select>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <label for="destination">Destination : </label>
+      <select name="destination" id="destination" required>
+        <option value="main gate">Main Gate</option>
+        <option value="oat">OAT</option>
+        <option value="basketball">Basketball</option>
+        <option value="cricket ground">Cricket Ground</option>
+        <option value="bus">Bus</option>
+        <option value="DS">DS</option>
+        <option value="academic block a">Academic Block A</option>
+        <option value="academic block c">Academic Block C</option>
+        <option value="academic block d">Academic Block D</option>
+        <option value="library">Library</option>
+        <option value="canteen">Canteen</option>
+        <option value="volleyball ground">Volleyball Ground</option>
+        <option value="hostel">Hostel</option>
+        <option value="saisandhya hall">Saisandhya Hall</option>
+        <option value="academic block b">Academic Block B</option>
+      </select>
+      <br><br>
+
+      <button type="submit">Get Shortest Path</button>
+
+      <br>
+    </form>
+    <% if (result) { %>
+<div style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; background-color: #cdcccc; max-width: 800px; margin: auto; text-align: center;">
+    <h3>Shortest Path Result</h3>
+    <pre style="white-space: pre-wrap; word-wrap: break-word;"><%= result %></pre>
+
+    <% if (osm_link) { %>
+    <p><strong>View Path on Map:</strong><br>
+        <a href="<%= osm_link %>" target="_blank" style="word-wrap: break-word; overflow-wrap: break-word; display: inline-block; max-width: 100%;">
+          <%= osm_link %>
+        </a>
+    </p>
+    <% } %>
+</div>
+<% } %>
+
+
+  </div>
+
 </body>
 </html>

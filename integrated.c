@@ -48,23 +48,22 @@ typedef struct
 
 /* Updated Node array with your college coordinates */
 Node nodes[V] =
-{
-    {"main gate", "main gate", 29.375000, 79.531111},
-    {"oat", "oat", 29.375278, 79.530000},
-    {"basketball", "basketball", 29.375000, 79.530278},
-    {"cricket ground", "cricket ground", 29.375000, 79.529444},
-    {"bus", "bus", 29.374444, 79.531111},
-    {"DS", "DS", 29.375278, 79.529722},
-    {"academic block a", "academic block a", 29.375278, 79.530833},
-    {"academic block c", "academic block c", 29.374444, 79.530556},
-    {"academic block d", "academic block d", 29.374444, 79.530000},
-    {"library", "library", 29.375556, 79.530556},
-    {"canteen", "canteen", 29.375000, 79.530833},
-    {"volleyball ground", "volleyball ground", 29.375000, 79.530000},
-    {"hostel", "hostel", 29.375833, 79.529444},
-    {"saisandhya hall", "saisandhya hall", 29.375556, 79.530000},
-    {"academic block b", "academic block b", 29.374722, 79.529722}
-};
+    {
+        {"main gate", "main gate", 29.375000, 79.531111},
+        {"oat", "oat", 29.375278, 79.530000},
+        {"basketball", "basketball", 29.375000, 79.530278},
+        {"cricket ground", "cricket ground", 29.375000, 79.529444},
+        {"bus", "bus", 29.374444, 79.531111},
+        {"DS", "DS", 29.375278, 79.529722},
+        {"academic block a", "academic block a", 29.375278, 79.530833},
+        {"academic block c", "academic block c", 29.374444, 79.530556},
+        {"academic block d", "academic block d", 29.374444, 79.530000},
+        {"library", "library", 29.375556, 79.530556},
+        {"canteen", "canteen", 29.375000, 79.530833},
+        {"volleyball ground", "volleyball ground", 29.375000, 79.530000},
+        {"hostel", "hostel", 29.375833, 79.529444},
+        {"saisandhya hall", "saisandhya hall", 29.375556, 79.530000},
+        {"academic block b", "academic block b", 29.374722, 79.529722}};
 
 /* Windows memory snapshot */
 void getMemorySnapshot(SIZE_T *memKB)
@@ -147,8 +146,9 @@ void reconstructPath(int src, int dest, int next[V][V], char *url, int distance,
 {
   char buffer[100];
   int u = src;
-  
-  strcat(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
+
+  /* Initialize url string first */
+  strcpy(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
 
   while (u != dest)
   {
@@ -183,7 +183,7 @@ void dijkstra(int src, int dest, int *path, int *pathLength, double *totalDist)
   int visited[V] = {0}, prev[V];
   int i, j, u, v, count, at, tmp;
   double min, d;
-  
+
   for (i = 0; i < V; i++)
   {
     dist[i] = INF;
@@ -278,9 +278,10 @@ void reconstructAStarPath(int cameFrom[], int current, Node nodes[V], char *url,
   char buffer[100];
   int path[V], count = 0;
   int i;
-  
-  strcat(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
-  
+
+  /* Initialize url string first */
+  strcpy(url, "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=");
+
   while (current != -1)
   {
     path[count++] = current;
@@ -303,7 +304,7 @@ int aStar(int graph[V][V], Node nodes[V], int start, int goal, int *totalDist, i
   PriorityQueue pq;
   int i, neighbor, current;
   double tentative_gScore;
-  
+
   pq.size = 0;
 
   for (i = 0; i < V; i++)
@@ -457,7 +458,7 @@ int main(int argc, char *argv[])
     double totalDist;
     double timeMinutes;
     int steps;
-    
+
     dijkstra(srcIdx, destIdx, path, &pathLength, &totalDist);
 
     if (pathLength == 0 || totalDist == INF)
@@ -478,7 +479,9 @@ int main(int argc, char *argv[])
 
     if (webOutput)
     {
-      char pathStr[500] = "";
+      char pathStr[500];
+      pathStr[0] = '\0'; /* Initialize empty string */
+
       for (i = 0; i < pathLength; i++)
       {
         strcat(pathStr, nodes[path[i]].name);
@@ -508,7 +511,7 @@ int main(int argc, char *argv[])
     int totalDist, cameFrom[V];
     double timeMinutes;
     int steps;
-    
+
     if (!aStar(graph, nodes, srcIdx, destIdx, &totalDist, cameFrom))
     {
       if (webOutput)
@@ -527,9 +530,11 @@ int main(int argc, char *argv[])
 
     if (webOutput)
     {
-      char pathStr[500] = "";
+      char pathStr[500];
       int pathNodes[V], count = 0;
       int current = destIdx;
+
+      pathStr[0] = '\0'; /* Initialize empty string */
 
       /* Reconstruct path */
       while (current != -1)
@@ -560,7 +565,7 @@ int main(int argc, char *argv[])
     int totalDist;
     double timeMinutes;
     int steps;
-    
+
     floydWarshall(graph, next);
     totalDist = graph[srcIdx][destIdx];
 
@@ -583,9 +588,12 @@ int main(int argc, char *argv[])
     if (webOutput)
     {
       /* Reconstruct path for Floyd-Warshall */
-      char pathStr[500] = "";
+      char pathStr[500];
       int u = srcIdx;
+
+      pathStr[0] = '\0'; /* Initialize empty string */
       strcat(pathStr, nodes[u].name);
+
       while (u != destIdx)
       {
         u = next[u][destIdx];

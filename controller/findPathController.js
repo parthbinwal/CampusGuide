@@ -3,25 +3,6 @@ const { spawn } = require('child_process');
 const findShortestPath = async(req, res) => {
     const { choice: algorithm, source, destination } = req.body;
 
-    // Campus coordinates mapping
-    const coordinates = {
-        "main gate": [29.375000, 79.531111],
-        "oat": [29.375278, 79.530000],
-        "basketball": [29.375000, 79.530278],
-        "cricket ground": [29.375000, 79.529444],
-        "bus": [29.374444, 79.531111],
-        "DS": [29.375278, 79.529722],
-        "academic block a": [29.375278, 79.530833],
-        "academic block c": [29.374444, 79.530556],
-        "academic block d": [29.374444, 79.530000],
-        "library": [29.375556, 79.530556],
-        "canteen": [29.375000, 79.530833],
-        "volleyball ground": [29.375000, 79.530000],
-        "hostel": [29.375833, 79.529444],
-        "saisandhya hall": [29.375556, 79.530000],
-        "academic block b": [29.374722, 79.529722]
-    };
-
     const child = spawn('integrated.exe', [algorithm, source, destination, '--web']);
     
     let output = '';
@@ -52,7 +33,7 @@ Time: ${jsonResult.time} minutes
 Steps: ${jsonResult.steps}
 Path: ${jsonResult.path}`;
                 
-                    osm_link = generateMapURL(jsonResult.path, coordinates);
+                    osm_link = generateMapURL(jsonResult.path);
                 } else {
                     result = `Error: ${jsonResult.error}`;
                 }
@@ -68,7 +49,7 @@ Path: ${jsonResult.path}`;
                     if (line.includes('Path:')) {
                         const pathString = line.replace('Path:', '').trim();
                         console.log('Extracted path:', pathString);
-                        osm_link = generateMapURL(pathString, coordinates);
+                        osm_link = generateMapURL(pathString);
                         break;
                     }
                 }
@@ -81,24 +62,58 @@ Path: ${jsonResult.path}`;
     });
 };
 
-// Fixed function to generate OpenStreetMap URL from path string
-function generateMapURL(pathString, coordinates) {
+function generateMapURL(pathString) {
+    const coordinates = {
+        "main gate": [29.375000, 79.531111],
+        "oat": [29.375278, 79.530000],
+        "basketball": [29.375000, 79.530278],
+        "cricket ground": [29.375000, 79.529444],
+        "bus": [29.374444, 79.531111],
+        "ds": [29.375278, 79.529722],  // Note: your C code uses "DS" (uppercase)
+        "academic block a": [29.375278, 79.530833],
+        "academic block b": [29.374722, 79.529722],
+        "academic block c": [29.374444, 79.530556],
+        "academic block d": [29.374444, 79.530000],
+        "library": [29.375556, 79.530556],
+        "canteen": [29.375000, 79.530833],
+        "volleyball ground": [29.375000, 79.530000],
+        "hostel": [29.375833, 79.529444],
+        "saisandhya hall": [29.375556, 79.530000]
+    };
+
     try {
-        console.log('Generating map URL for path:', pathString); // Debug line
+        console.log('Generating map URL for path:', pathString);
         
-        // Parse the path string (e.g., "main gate → basketball")
-        const locations = pathString.split(' → ').map(loc => loc.trim());
-        console.log('Split locations:', locations); // Debug line
+        let locations = [];
+        
+        // Handle ASCII arrow separator (recommended)
+        if (pathString.includes(' -> ')) {
+            locations = pathString.split(' -> ');
+        }
+        // Fallback for other separators
+        else if (pathString.includes(' → ')) {
+            locations = pathString.split(' → ');
+        }
+        else if (pathString.includes(' ? ')) {
+            locations = pathString.split(' ? ');
+        }
+        else {
+            // If no separator found, try to extract locations
+            console.log('No standard separator found, attempting extraction...');
+            return null;
+        }
+        
+        // Clean and normalize location names
+        locations = locations
+            .map(loc => loc.trim().toLowerCase())
+            .filter(loc => loc.length > 0);
+        
+        console.log('Split locations:', locations);
         
         // Build coordinate string for OpenStreetMap
         const coords = locations.map(location => {
-            // Try exact match first, then lowercase match
-            let coord = coordinates[location];
-            if (!coord) {
-                coord = coordinates[location.toLowerCase()];
-            }
-            
-            console.log(`Location: "${location}" -> Coord:`, coord); // Debug line
+            const coord = coordinates[location];
+            console.log(`Location: "${location}" -> Coord:`, coord);
             
             if (coord) {
                 return `${coord[0]},${coord[1]}`;
@@ -106,18 +121,18 @@ function generateMapURL(pathString, coordinates) {
             return null;
         }).filter(coord => coord !== null);
         
-        console.log('Final coords array:', coords); // Debug line
+        console.log('Final coords array:', coords);
         
         if (coords.length > 0) {
             const baseURL = "https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=";
             const routeCoords = coords.join(';');
             const finalURL = baseURL + routeCoords;
-            console.log('Final URL:', finalURL); // Debug line
+            console.log('Final URL:', finalURL);
             return finalURL;
         }
         
-        console.log('No valid coordinates found'); // Debug line
         return null;
+        
     } catch (error) {
         console.error('Error generating map URL:', error);
         return null;

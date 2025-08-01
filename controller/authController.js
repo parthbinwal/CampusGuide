@@ -66,8 +66,14 @@ const getMap=(req,res)=>{
   }
   res.render('Map',{ result: null, osm_link: null });
 }
+const logout=(req,res)=>{
+  req.session.destroy((err) => {
+    if(err) {
+      console.error(err);
+      return res.status(500).send('Internal Server Error');
+    }
+    res.redirect('/api/login');
+  });
+}
 
-
-
-
-module.exports={getLogin,postLogin,getRegister,postRegister,getMap}
+module.exports={getLogin,postLogin,getRegister,postRegister,getMap,logout}

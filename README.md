@@ -690,5 +690,5 @@ For technical support:
 ---
 
 **Project Version**: 1.0.0  
-**Last Updated**: [Current Date]  
+**Last Updated**: [27/AUG/2025]  
 **Maintained By**: Campus Navigation Team

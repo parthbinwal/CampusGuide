@@ -4,6 +4,7 @@ The Campus Navigation System is a comprehensive web application designed to help
 classic pathfinding algorithms to provide real-time route calculation and interactive map visualization.
 ![image alt](https://github.com/parthbinwal/CampusGuide/blob/728da1a29ffa049b192702c34552ed4ad3aa7fa7/Screenshot%20(1).png)
 ![image alt](https://github.com/parthbinwal/CampusGuide/blob/841dc6114f3a2c3685fe1af677d7fb2d4381898d/screenshotcrop.png)
+![image alt](https://github.com/parthbinwal/CampusGuide/blob/9fe0010616d0ab025b79976d4fceb108e31e26a2/Screenshot%20(3).png)
 
 
 
